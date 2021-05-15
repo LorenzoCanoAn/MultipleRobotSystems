@@ -1,0 +1,37 @@
+# -*- mode: editorconfig; -*-
+# vi: set ft=editorconfig:
+
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+indent_size = 2
+indent_style = space
+insert_final_newline = true
+max_line_length = 80
+trim_trailing_whitespace = true
+
+[*.h]
+indent_style = tab
+
+[*.cpp]
+indent_style = tab
+
+[*.md]
+trim_trailing_whitespace = false
+
+[.bazelignore]
+indent_size = 4
+
+[.bazelrc]
+indent_size = 4
+
+[Brewfile]
+indent_size = 4
+
+[BUILD]
+indent_size = 4
+
+[WORKSPACE]
+indent_size = 4
