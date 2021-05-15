@@ -96,10 +96,10 @@ int main(int argc, char *argv[])
 }
 
 //#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#
-// FUNCIONES
+// FUNCTIONS
 //#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#~#
 
-// Generador de colores aleatorios para los robots.
+// Generator of random colors for the robots
 std::vector <cv::Scalar> random_colors_gen(size_t nBots){
 	std::vector <cv::Scalar> colors;
 	double R, G, B;
