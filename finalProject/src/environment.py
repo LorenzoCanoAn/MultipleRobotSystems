@@ -53,18 +53,17 @@ class environment:
         self.dispImage = overlay(self.dispImage, self.background)
         self.dispImage = overlay(self.dispImage, self.robot_layer)
 
-    def real_to_pixel(self, point):
+    def coord_to_pixel(self, point):
         """ Our coordinate system for the environtment will 
             go from 0 to env_height in the y axis and from 0 to r_widht in the x axis
             - point is a numpy array """
-        point = point / self.scale # scale the point to put it on pixels
-        point[1] = self.w_size[0] - point[1] # the y axis has to change
-        return point
+        x = int(point[0] / self.scale) # scale the point to put it on pixels
+        y = int(self.w_size[0] - point[1]/ self.scale) # the y axis has to change
+        return [x, y]
 
     def draw_base(self):
-        pose = self.real_to_pixel(np.array(self.params["base_pose"]))
-        pose = (int(pose[0]), int(pose[1]))
-        self.background = cv2.circle(self.background, pose, 5, (200,0,0), -1)
+        pose = self.coord_to_pixel(np.array(self.params["base_pose"]))
+        self.background = cv2.circle(self.background, pose, 6, (200,0,0), -1)
 
 def overlay(image1, image2):
     mask = np.sum(image2,axis=2) == 0
