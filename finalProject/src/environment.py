@@ -25,25 +25,27 @@ class environment:
     
     def init_default_params(self):
         self.params = {
-            "r_height"  : 500,
-            "r_width"   : 500,
+            "env_height"  : 400,
+            "env_width"   : 600,
             "nBots"     : 20,
-            "base_pose" : np.reshape(np.array([10,10],dtype="double"),[2,1]),
+            "base_pose" : [10,10],
             "window_name": "display"
         }
 
     def init_plot(self):
         root = tk.Tk()
-        s_width = root.winfo_screenwidth()
-        s_height = root.winfo_screenheight()
+        s_height = root.winfo_screenheight() * 0.9
         root.destroy()
 
+        aspect_ratio = self.params["env_width"] / self.params["env_height"]
+        self.scale = self.params["env_height"] / s_height
 
-        self.w_size = int((s_width*(s_height>s_width) + s_height*(s_height<=s_width))*0.8)
-        self.background = np.zeros([self.w_size, self.w_size, 3],dtype="uint8")
-        self.robot_layer = np.zeros([self.w_size, self.w_size, 3],dtype="uint8")
-        self.covered_layer = np.zeros([self.w_size, self.w_size, 3],dtype="uint8")
-        self.combine_layers();
+        self.w_size = np.array([int(s_height),int(s_height*aspect_ratio),3]);
+        self.background = np.zeros(self.w_size,dtype="uint8")
+        self.robot_layer = np.zeros(self.w_size,dtype="uint8")
+        self.covered_layer = np.zeros(self.w_size,dtype="uint8")
+        self.draw_base()
+        self.combine_layers()
         cv2.imshow(self.params["window_name"], self.dispImage)
 
     def combine_layers(self):
@@ -51,6 +53,18 @@ class environment:
         self.dispImage = overlay(self.dispImage, self.background)
         self.dispImage = overlay(self.dispImage, self.robot_layer)
 
+    def real_to_pixel(self, point):
+        """ Our coordinate system for the environtment will 
+            go from 0 to env_height in the y axis and from 0 to r_widht in the x axis
+            - point is a numpy array """
+        point = point / self.scale # scale the point to put it on pixels
+        point[1] = self.w_size[0] - point[1] # the y axis has to change
+        return point
+
+    def draw_base(self):
+        pose = self.real_to_pixel(np.array(self.params["base_pose"]))
+        pose = (int(pose[0]), int(pose[1]))
+        self.background = cv2.circle(self.background, pose, 5, (200,0,0), -1)
 
 def overlay(image1, image2):
     mask = np.sum(image2,axis=2) == 0
