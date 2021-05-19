@@ -4,8 +4,8 @@
 
 
 # Configuration directories and files
-SourceDirectory: /home/lorenzo/dev/MRS/HRVO
-BuildDirectory: /home/lorenzo/dev/MRS/HRVO
+SourceDirectory: /home/lorenzo/dev/MultipleRobotSystems/HRVO
+BuildDirectory: /home/lorenzo/dev/MultipleRobotSystems/HRVO
 
 # Where to place the cost data store
 CostDataFile: 
@@ -26,7 +26,7 @@ SubmitURL: https://my.cdash.org/submit.php?project=HRVO
 NightlyStartTime: 01:00:00 UTC
 
 # Commands for the build/test/submit cycle
-ConfigureCommand: "/usr/bin/cmake" "/home/lorenzo/dev/MRS/HRVO"
+ConfigureCommand: "/usr/bin/cmake" "/home/lorenzo/dev/MultipleRobotSystems/HRVO"
 MakeCommand: /usr/bin/cmake --build . --config "${CTEST_CONFIGURATION_TYPE}"
 DefaultCTestConfigurationType: Release
 

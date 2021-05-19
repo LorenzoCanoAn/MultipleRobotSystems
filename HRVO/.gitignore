@@ -3,3 +3,18 @@
 
 /_build/
 /bazel-*
+*.make
+CMakeCache.txt
+cmake_install.cmake
+Makefile
+.vscode/
+*.cmake
+
+*.so*
+*/CMakeFiles/*
+*.log
+CMakeFiles/
+examples/Circle
+examples/Circle_graphic
+.gitignore
+examples/first_name_letter
