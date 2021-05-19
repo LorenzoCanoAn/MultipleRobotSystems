@@ -133,9 +133,9 @@ dmypy.json
 *.cmake
 HRVO/CMakeCache.txt
 HRVO/DartConfiguration.tcl
-*Makefile*
-*/CMakeFiles/*
-*.marks
-*.make
-*link.txt
-*c_cpp_properties.json
+HRVO*Makefile*
+HRVO*/CMakeFiles/*
+HRVO*.marks
+HRVO*.make
+HRVO*link.txt
+HRVO*c_cpp_properties.json
