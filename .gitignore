@@ -138,3 +138,4 @@ HRVO/DartConfiguration.tcl
 *.marks
 *.make
 *link.txt
+HRVO/.vscode/c_cpp_properties.json
