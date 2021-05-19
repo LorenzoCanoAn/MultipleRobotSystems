@@ -127,3 +127,14 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# c++ cmake thingies
+
+*.cmake
+HRVO/CMakeCache.txt
+HRVO/DartConfiguration.tcl
+*Makefile*
+*/CMakeFiles/*
+*.marks
+*.make
+*link.txt
