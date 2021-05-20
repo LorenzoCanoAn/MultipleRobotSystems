@@ -128,8 +128,22 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
+<<<<<<< HEAD
 
 # Other thingies
 
 *.mp4
 *.dat
+=======
+# c++ cmake thingies
+
+*.cmake
+HRVO/CMakeCache.txt
+HRVO/DartConfiguration.tcl
+HRVO*Makefile*
+HRVO*/CMakeFiles/*
+HRVO*.marks
+HRVO*.make
+HRVO*link.txt
+HRVO*c_cpp_properties.json
+>>>>>>> e087ee69c57174d610ea770fec899c9f954e9299
