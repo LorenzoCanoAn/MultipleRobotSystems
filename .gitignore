@@ -135,15 +135,18 @@ dmypy.json
 *.mp4
 *.dat
 =======
-# c++ cmake thingies
 
-*.cmake
-HRVO/CMakeCache.txt
-HRVO/DartConfiguration.tcl
-HRVO*Makefile*
-HRVO*/CMakeFiles/*
-HRVO*.marks
-HRVO*.make
-HRVO*link.txt
-HRVO*c_cpp_properties.json
->>>>>>> e087ee69c57174d610ea770fec899c9f954e9299
+# c++ Gitignore for teh HRVO directory
+**/HRVO/**/*.cmake
+**/HRVO/**/CMakeCache.txt
+**/HRVO/**/*.tcl
+**/HRVO/**/Makefile
+**/HRVO/**/CMakeFiles/**
+**/HRVO/**/*.marks
+**/HRVO/**/*.make
+**/HRVO/**/*link.txt
+**/HRVO/**/*c_cpp_properties.json
+**/HRVO/**/*.dir
+**/HRVO/**/*.so*
+**/HRVO/**/examples/**
+!**/HRVO/**/examples/*.cpp
