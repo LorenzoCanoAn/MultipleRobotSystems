@@ -1,13 +1,18 @@
 import numpy as np
 import cv2
 import tkinter as tk
-
+from robot import *
 # This class is supposed to handle at the same time the environment and the visualization of it.
 class environment:
 
     def __init__(self, i_params=None):
+        self.robots=[]
         self.init_params(i_params)
+        self.init_robots()
+
         self.init_plot()
+
+
 
     def init_params(self, i_params):
         if type(i_params) == type(None):
@@ -41,10 +46,11 @@ class environment:
         self.scale = self.params["env_height"] / s_height
 
         self.w_size = np.array([int(s_height),int(s_height*aspect_ratio),3]);
-        self.background = np.zeros(self.w_size,dtype="uint8")
+        self.background = np.ones(self.w_size,dtype="uint8")*0.5
         self.robot_layer = np.zeros(self.w_size,dtype="uint8")
         self.covered_layer = np.zeros(self.w_size,dtype="uint8")
         self.draw_base()
+        self.draw_robots()
         self.combine_layers()
         cv2.imshow(self.params["window_name"], self.dispImage)
 
@@ -63,7 +69,19 @@ class environment:
 
     def draw_base(self):
         pose = self.coord_to_pixel(np.array(self.params["base_pose"]))
-        self.background = cv2.circle(self.background, pose, 6, (200,0,0), -1)
+        self.background = cv2.circle(self.background, (pose[0],pose[1]), 2, (200,0,0), -1)
+
+    def draw_robots(self):
+        for i in range(len(self.robots)):
+            pose=self.coord_to_pixel(self.robots[i].position[-1])
+            self.background=cv2.circle(self.background, (pose[0],pose[1]), 1, (0,200,0), -1)
+            self.background = cv2.circle(self.background, (pose[0], pose[1]), self.robots[i].radius, (100, 255, 100))
+
+    def init_robots(self):
+
+        for i in range(self.params['nBots']):
+            self.robots.append(robot(i,init_position=np.array([600*np.random.uniform(0,1),400*np.random.uniform(0,1)])))
+
 
 def overlay(image1, image2):
     mask = np.sum(image2,axis=2) == 0
