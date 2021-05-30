@@ -14,13 +14,13 @@ from numpy import pi
 # Random seed for reproducibility
 seed(0)
 # Working_dir
-working_dir = str(Path.home())+'/dev/MultipleRobotSystems/p3'
+working_dir = '/Users/mjimenez/pythonProject1'
 os.chdir(working_dir) # for files
 
 ## To info or not to info
 loginfo=True # True for debugging
-logerror=True
-visual=True 
+logerror=False
+visual=True
 shoul=False # to show Soul's or not (graphically)
 showconn=False # to show the graph of connections
 
@@ -42,11 +42,11 @@ room=[(-W,-H),(W,-H),(W,H),(-W,H)]
 # Therefore, 0.1 s real-time must take some more time than the typical update,
 # which can be measured. For my set-up, the update of a few tens of Soul's
 # takes a fraction of a second, hence the simulation of 0.1 s shoud take about 1 s, so:
-TS=5 # simulation-time seconds per real-time second
+TS=2 # simulation-time seconds per real-time second
 
 # For a movie with 10 fps, each redraw at "real-time" would happen each 0.1 s
 # so, with TS=1, the redraw time should be RT=0.1:
-RT=0.1*TS # simulation-time seconds per frame, for a 10 fps movie
+RT=0.5*TS # simulation-time seconds per frame, for a 10 fps movie
 
 # Normal max vels, in units per sec
 # In accordance with the above on time scale, vels in units per second should be scaled

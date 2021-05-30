@@ -11,11 +11,13 @@
 
 from time import time, localtime, strftime
 import numpy as np
-from point2d import Point2D 
+from point2d import Point2D
+
 from random import uniform, randint, choice
 from shapely.geometry import Point, Polygon, LineString, MultiPoint
 from shapely.affinity import translate, rotate, scale
 from shapely.ops import nearest_points, unary_union
+
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
@@ -502,7 +504,7 @@ class Body: # Something in a Space
         return self.name+' is a '+str(self.__class__)[17:-2]+' at ({0:1.2f},{1:1.2f})'.format(self.pos.x,self.pos.y)+' with area {0:1.2e}'.format(self.area)+' of color '+str(self.fc)
 
     def update(self):
-        dt=time()-self.time
+        dt= time() -self.time
         self.updates += 1
         if self.updates>0:
             self.avgT = ((self.updates-1)*self.avgT+dt)/self.updates
