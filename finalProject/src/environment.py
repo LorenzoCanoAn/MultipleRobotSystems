@@ -47,17 +47,14 @@ class environment:
         self.scale = self.params["env_height"] / s_height
 
         self.w_size = np.array([int(s_height),int(s_height*aspect_ratio),3]);
-        self.background = np.ones(self.w_size,dtype="uint8")*0.5
+        self.background = np.ones(self.w_size,dtype="uint8")*int(255/2)
         self.robot_layer = np.zeros(self.w_size,dtype="uint8")
         self.covered_layer = np.zeros(self.w_size,dtype="uint8")
-        self.draw_base()
-        self.draw_robots()
-        self.combine_layers()
-        cv2.imshow(self.params["window_name"], self.dispImage)
+        self.draw_env()
 
     def combine_layers(self):
         self.dispImage = self.background
-        self.dispImage = overlay(self.dispImage, self.background)
+        self.dispImage = overlay(self.dispImage, self.covered_layer  )
         self.dispImage = overlay(self.dispImage, self.robot_layer)
 
     def coord_to_pixel(self, point):
@@ -77,15 +74,21 @@ class environment:
         for i in range(len(self.active_robots)):
             pose=self.coord_to_pixel(self.active_robots[i].position[-1])
             self.robot_layer = cv2.circle(self.robot_layer, (pose[0],pose[1]), 1, (0,200,0), -1)
-            self.robot_layer = cv2.circle(self.robot_layer, (pose[0], pose[1]), self.active_robots[i].radius, (100, 255, 100))
-
+            self.robot_layer = cv2.circle(self.robot_layer, (pose[0], pose[1]), self.active_robots[i].radius, (255, 255, 255))
+            self.covered_layer = cv2.circle(self.covered_layer, (pose[0], pose[1]), 3, (0, 200, 200), -1)
+    
+    def draw_env(self):
+        self.draw_base()
+        self.draw_robots()
+        self.combine_layers()
+        cv2.imshow(self.params["window_name"], self.dispImage)
     def init_robots(self):
         for i in range(self.params['nBots']):
             self.active_robots.append(robot(i,init_position=np.array([600*np.random.uniform(0,1),400*np.random.uniform(0,1)])))
 
 
 def overlay(image1, image2):
-    mask = np.sum(image2,axis=2) == 0
+    mask = np.sum(image2,axis=2) == 0 # value of 1 where image 2 is 0
     d = mask.shape
     mask = np.reshape(mask,[d[0],d[1],-1])
     overlayed = np.multiply(image1,mask) + image2
