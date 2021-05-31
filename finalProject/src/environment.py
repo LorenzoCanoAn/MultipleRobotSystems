@@ -6,7 +6,8 @@ from robot import *
 class environment:
 
     def __init__(self, i_params=None):
-        self.robots=[]
+        self.active_robots=[]
+        self.inactive_robots=[]
         self.init_params(i_params)
         self.init_robots()
 
@@ -72,15 +73,15 @@ class environment:
         self.background = cv2.circle(self.background, (pose[0],pose[1]), 2, (200,0,0), -1)
 
     def draw_robots(self):
-        for i in range(len(self.robots)):
-            pose=self.coord_to_pixel(self.robots[i].position[-1])
-            self.background=cv2.circle(self.background, (pose[0],pose[1]), 1, (0,200,0), -1)
-            self.background = cv2.circle(self.background, (pose[0], pose[1]), self.robots[i].radius, (100, 255, 100))
+        self.robot_layer = np.zeros(self.w_size,dtype="uint8")
+        for i in range(len(self.active_robots)):
+            pose=self.coord_to_pixel(self.active_robots[i].position[-1])
+            self.robot_layer = cv2.circle(self.robot_layer, (pose[0],pose[1]), 1, (0,200,0), -1)
+            self.robot_layer = cv2.circle(self.robot_layer, (pose[0], pose[1]), self.active_robots[i].radius, (100, 255, 100))
 
     def init_robots(self):
-
         for i in range(self.params['nBots']):
-            self.robots.append(robot(i,init_position=np.array([600*np.random.uniform(0,1),400*np.random.uniform(0,1)])))
+            self.active_robots.append(robot(i,init_position=np.array([600*np.random.uniform(0,1),400*np.random.uniform(0,1)])))
 
 
 def overlay(image1, image2):

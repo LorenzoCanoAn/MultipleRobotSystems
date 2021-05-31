@@ -28,10 +28,6 @@ class battery:
 
 
 
-
-
-
-
 class robot:
     def __init__(self,index, init_battery=100, init_position=np.array([0,0]), radius=5, dT=1):
         self.index=index
