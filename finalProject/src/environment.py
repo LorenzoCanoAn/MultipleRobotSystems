@@ -3,16 +3,27 @@ import cv2
 import tkinter as tk
 from robot import *
 # This class is supposed to handle at the same time the environment and the visualization of it.
+
+class base:
+    def __init__(self, position=np.array([0,0])):
+
+        self.position=position
+
 class environment:
 
     def __init__(self, i_params=None):
         self.robots={}
 
         self.init_params(i_params)
+
+        self.base=base(position=np.array(self.params["base_pose"]))
+
         self.init_robots()
 
         self.init_plot()
-        self.neighbours_information={}
+        self.neighbours_information = {}
+
+
 
     def init_params(self, i_params):
         if type(i_params) == type(None):
@@ -92,6 +103,14 @@ class environment:
             pose=self.coord_to_pixel(self.robots[i].position[-1])
             self.robot_layer = cv2.circle(self.robot_layer, (pose[0],pose[1]), 1, (0,200,0), -1)
             self.robot_layer = cv2.circle(self.robot_layer, (pose[0], pose[1]), self.robots[i].radius, (255, 255, 255))
+            if self.robots[i].state=='Active':
+                col=(0,255*self.robots[i].battery.battery/100,255-255*self.robots[i].battery.battery/100)
+            elif self.robots[i].state=='Returning':
+                col=(0,0,255)
+            elif  self.robots[i].state=='Charging':
+                col=(128,0,128)
+            self.robot_layer=cv2.putText(self.robot_layer, str(round(self.robots[i].battery.battery,2)), (pose[0]+4, pose[1]+4),cv2.FONT_HERSHEY_SIMPLEX,0.4,color=col)
+
             self.covered_layer = cv2.circle(self.covered_layer, (pose[0], pose[1]), 3, (0, 200, 200), -1)
     
     def draw_env(self):
@@ -101,7 +120,7 @@ class environment:
         cv2.imshow(self.params["window_name"], self.dispImage)
     def init_robots(self):
         for i in range(self.params['nBots']):
-            self.robots[i]=(robot(i,init_position=np.array([600*np.random.uniform(0,1),400*np.random.uniform(0,1)])))
+            self.robots[i]=(robot(i,self.base.position,init_position=np.array([600*np.random.uniform(0,1),400*np.random.uniform(0,1)])))
 
 
     def update_robots(self):
