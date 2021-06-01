@@ -15,6 +15,7 @@ if __name__ == "__main__":
 
     for i in range(20):
         env.draw_env()
-        for robot in env.active_robots:
-            robot.position[-1] = robot.position[-1] + np.array([1,1])
+        env.update_robots()
+
+        print('neighbours:', env.neighbours_information)
         cv2.waitKey(0)

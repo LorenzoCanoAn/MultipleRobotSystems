@@ -6,14 +6,13 @@ from robot import *
 class environment:
 
     def __init__(self, i_params=None):
-        self.active_robots=[]
-        self.inactive_robots=[]
+        self.robots={}
+
         self.init_params(i_params)
         self.init_robots()
 
         self.init_plot()
-
-
+        self.neighbours_information={}
 
     def init_params(self, i_params):
         if type(i_params) == type(None):
@@ -28,7 +27,23 @@ class environment:
                 else:
                     print("The param {} does not belong to the environment class.".format(key))
 
-    
+    def compute_neighbours(self):
+        self.neighbours_information={}
+        for i in self.robots:
+
+            self.neighbours_information[i]=[]
+            if self.robots[i].state!='Active':
+
+                continue
+            for j in self.robots:
+                if self.robots[j].state!='Active' or i==j:
+
+                    continue
+
+                if np.linalg.norm(self.robots[i].position[-1]-self.robots[j].position[-1])<self.robots[i].connection_radius:
+
+                    self.neighbours_information[i].append(j)
+
     def init_default_params(self):
         self.params = {
             "env_height"  : 400,
@@ -61,6 +76,7 @@ class environment:
         """ Our coordinate system for the environtment will 
             go from 0 to env_height in the y axis and from 0 to r_widht in the x axis
             - point is a numpy array """
+
         x = int(point[0] / self.scale) # scale the point to put it on pixels
         y = int(self.w_size[0] - point[1]/ self.scale) # the y axis has to change
         return [x, y]
@@ -71,10 +87,11 @@ class environment:
 
     def draw_robots(self):
         self.robot_layer = np.zeros(self.w_size,dtype="uint8")
-        for i in range(len(self.active_robots)):
-            pose=self.coord_to_pixel(self.active_robots[i].position[-1])
+        for i in range(len(self.robots)):
+
+            pose=self.coord_to_pixel(self.robots[i].position[-1])
             self.robot_layer = cv2.circle(self.robot_layer, (pose[0],pose[1]), 1, (0,200,0), -1)
-            self.robot_layer = cv2.circle(self.robot_layer, (pose[0], pose[1]), self.active_robots[i].radius, (255, 255, 255))
+            self.robot_layer = cv2.circle(self.robot_layer, (pose[0], pose[1]), self.robots[i].radius, (255, 255, 255))
             self.covered_layer = cv2.circle(self.covered_layer, (pose[0], pose[1]), 3, (0, 200, 200), -1)
     
     def draw_env(self):
@@ -84,7 +101,17 @@ class environment:
         cv2.imshow(self.params["window_name"], self.dispImage)
     def init_robots(self):
         for i in range(self.params['nBots']):
-            self.active_robots.append(robot(i,init_position=np.array([600*np.random.uniform(0,1),400*np.random.uniform(0,1)])))
+            self.robots[i]=(robot(i,init_position=np.array([600*np.random.uniform(0,1),400*np.random.uniform(0,1)])))
+
+
+    def update_robots(self):
+        self.compute_neighbours()
+        for i in self.robots:
+            self.robots[i].update()
+            self.robots[i].update_neighbours(self)
+
+
+
 
 
 def overlay(image1, image2):

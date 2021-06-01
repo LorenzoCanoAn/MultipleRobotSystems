@@ -29,9 +29,9 @@ class battery:
 
 
 class robot:
-    def __init__(self,index, init_battery=100, init_position=np.array([0,0]), radius=5, dT=1):
+    def __init__(self,index, init_battery=100, init_position=np.array([0,0]), radius=5, dT=1,connection_radius=50):
         self.index=index
-
+        self.connection_radius=connection_radius
         self.position=[init_position]
         self.radius=radius
         self.velocity=[np.array([0,0])]
@@ -50,10 +50,22 @@ class robot:
         self.dT=dT
 
     def update(self):
+        new_velocity=self.compute_vel()
 
-        self.velocity.append(self.velocity[-1]+self.input*self.dT)
-        self.position.append(self.position[-1]+self.velocity*self.dT)
+        self.velocity.append(np.array(new_velocity))
+
+
+        self.position.append(np.array(self.position[-1]+self.velocity[-1]*self.dT))
+
         self.battery.update()
+
+    def compute_vel(self):
+        "Aquí debería ir el cálculo de la velocidad basado en la posición de los neighbours"
+
+        return np.array([1,1])
+    def update_neighbours(self,environment):
+        self.neighbours=environment.neighbours_information[self.index]
+
 
 
 
