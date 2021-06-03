@@ -2,6 +2,7 @@ import numpy as np
 import cv2
 import tkinter as tk
 from robot import *
+from formation_planner import *
 # This class is supposed to handle at the same time the environment and the visualization of it.
 
 class base:
@@ -12,6 +13,7 @@ class base:
 class environment:
 
     def __init__(self, i_params=None):
+        self.dT=0.1
         self.robots={}
 
         self.init_params(i_params)
@@ -22,6 +24,8 @@ class environment:
 
         self.init_plot()
         self.neighbours_information = {}
+
+
 
 
 
@@ -111,22 +115,26 @@ class environment:
                 col=(128,0,128)
             self.robot_layer=cv2.putText(self.robot_layer, str(round(self.robots[i].battery.battery,2)), (pose[0]+4, pose[1]+4),cv2.FONT_HERSHEY_SIMPLEX,0.4,color=col)
 
-            self.covered_layer = cv2.circle(self.covered_layer, (pose[0], pose[1]), 3, (0, 200, 200), -1)
-    
-    def draw_env(self):
+            self.covered_layer = cv2.circle(self.covered_layer, (pose[0], pose[1]), self.robots[0].radius, (0, 200, 200), -1)
+
+    def update_env(self):
         self.draw_base()
         self.draw_robots()
+        self.update_robots()
+
+    def draw_env(self):
+
         self.combine_layers()
         cv2.imshow(self.params["window_name"], self.dispImage)
     def init_robots(self):
         for i in range(self.params['nBots']):
-            self.robots[i]=(robot(i,self.base.position,init_position=np.array([600*np.random.uniform(0,1),400*np.random.uniform(0,1)])))
+            self.robots[i]=(robot(i,self.base.position,dT=self.dT,init_position=np.array([600*np.random.uniform(0,1),400*np.random.uniform(0,1)])))
 
 
     def update_robots(self):
         self.compute_neighbours()
         for i in self.robots:
-            self.robots[i].update()
+            self.robots[i].update(self)
             self.robots[i].update_neighbours(self)
 
 
