@@ -295,7 +295,7 @@ class Demo(Soul):
 
 
     def update(self):
-        self.algorithm_1()
+        self.algorithm_0()
         super().update()
 
 ## MAIN
