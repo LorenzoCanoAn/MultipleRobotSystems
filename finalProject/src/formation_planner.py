@@ -109,7 +109,7 @@ if __name__ == "__main__":
             print('New goal:', goal_array[set_goal])
         pathplanner.move_formation_goal(goal_array[set_goal])
         pathplanner.enviroment.update_env()
-        if i%10==0:
+        if i%30==0:
             pathplanner.enviroment.draw_env()
         #print('neighbours:', env.neighbours_information)
 
@@ -119,7 +119,7 @@ if __name__ == "__main__":
         print(pathplanner.center)
         if i==800:
             pathplanner.move_formation(np.array([0, 1]), 0)
-        cv2.waitKey(100)
+        cv2.waitKey(1)
 
 
 

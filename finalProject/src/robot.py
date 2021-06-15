@@ -1,6 +1,11 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
+
+
+
+#Mensaje entre robots que tnga un timestamp y contenga la direccion d la formacion, el gap  y el centro
+
 class battery:
     def __init__(self, robot, dT,C=0.05, K=0.007,init_battery=100):
 

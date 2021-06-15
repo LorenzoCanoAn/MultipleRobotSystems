@@ -42,7 +42,7 @@ room=[(-W,-H),(W,-H),(W,H),(-W,H)]
 # Therefore, 0.1 s real-time must take some more time than the typical update,
 # which can be measured. For my set-up, the update of a few tens of Soul's
 # takes a fraction of a second, hence the simulation of 0.1 s shoud take about 1 s, so:
-TS=2 # simulation-time seconds per real-time second
+TS=1 # simulation-time seconds per real-time second
 
 # For a movie with 10 fps, each redraw at "real-time" would happen each 0.1 s
 # so, with TS=1, the redraw time should be RT=0.1:
