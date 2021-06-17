@@ -753,6 +753,7 @@ class GoTo(Soul):
     
     def cmd_set(self,where='=',after='=',Kp='=',tol='=',nw='=',p='='):
         """ Set destination, arrival time after secs, Kp, tol, and p; '=' to keep current values  """
+        self.spiral_time = 0
         if where != '=':
             if where==None:
                 self.where=None
@@ -784,11 +785,15 @@ class GoTo(Soul):
             elif self.nw=='wander': # random changes of w
                 if uniform(0,1)<self.p:
                     self.body.cmd_vel(w=choice(('+','-','=')))
+                    self.body.cmd_vel(w = uniform(-1.0,1.0)*self.body.w_max)
             elif self.nw=='zigzag': # random changes of direction
                 if uniform(0,1)<self.p:
                     self.body.teleport(th=self.body.th+uniform(-1,1)*self.body.w_max*self.T)
             elif self.nw=='keepgoing': # keep v and w
                 pass
+            elif self.nw=='spiral': # keep v and w
+                self.spiral_time += 1
+                self.body.cmd_vel(v = self.body.v_max,w = self.body.w_max/np.sqrt(self.spiral_time*3))
 
 class Voronoid(Soul):
     """ Soul of a Voronoi's-based mobile sensor in a network covering a static region, Cortes2004 like """

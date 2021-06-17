@@ -3,7 +3,7 @@
 ## Author: Enrique Teruel (ET) eteruel@unizar.es
 ## License: CC-BY-SA
 
-from time import time_ns, time, localtime, strftime
+from time import  time, localtime, strftime
 from random import uniform
 import numpy as np
 from matplotlib.animation import FFMpegWriter # requires having ffmpeg installed, from https://ffmpeg.org/
@@ -295,7 +295,7 @@ class Demo(Soul):
 
 
     def update(self):
-        self.algorithm_0()
+        self.algorithm_1()
         super().update()
 
 ## MAIN
@@ -305,7 +305,7 @@ if __name__ == '__main__':
     p=KPIdata(name,2,TS)
     # a big nest in the second quadrant:
     bignest=Nest('BigNest',pos=(uniform(-0.8*W,-0.2*W),uniform(0.4*H,0.6*H)),area=0.02,fc=(0,0,1)) #
-    smallnest = Nest('SmallNest', pos=(uniform(0.8*W,0.2*W),uniform(-0.4*H,-0.6*H)), area=0.04, fc=(1,0,0))  #
+    smallnest = Nest('SmallNest', pos=(uniform(0.8*W,0.2*W),uniform(-0.4*H,-0.6*H)), area=0.8, fc=(1,0,0))  #
     s.bodies.append(bignest)
     s.bodies.append(smallnest)
     N=100

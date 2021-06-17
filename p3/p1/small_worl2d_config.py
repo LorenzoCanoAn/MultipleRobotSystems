@@ -14,7 +14,7 @@ from numpy import pi
 # Random seed for reproducibility
 seed(0)
 # Working_dir
-working_dir = '/Users/mjimenez/pythonProject2'
+working_dir = '/home/lorenzo/dev/MultipleRobotSystems/p3/p1/docs'
 os.chdir(working_dir) # for files
 
 ## To info or not to info
