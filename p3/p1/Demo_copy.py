@@ -203,6 +203,12 @@ class go_to_biggest_nest(Soul):
 
 ## MAIN
 if __name__ == '__main__':
+    N=25
+    param_R = 2
+    param_rng = np.pi/2
+
+
+    
     name='Demo'+strftime("%Y%m%d%H%M", localtime())
     s=Space(name,T=RT,limits='')
     p=KPIdata(name,2,TS)
@@ -214,9 +220,7 @@ if __name__ == '__main__':
     s.bodies.append(smallnest)
 
     # SPAWN MOBOTS
-    N=25
-    param_R = 2
-    param_rng = np.pi/2
+    
     s.spawn_bodies(nm=N)
     for b in s.bodies:
         if isinstance(b,Mobot):
