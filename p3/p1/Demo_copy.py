@@ -4,7 +4,7 @@
 ## License: CC-BY-SA
 
 from time import time, localtime, strftime
-from random import uniform, randint
+from random import uniform, randint, random
 import numpy as np
 from matplotlib.animation import FFMpegWriter
 from shapely.geometry import point # requires having ffmpeg installed, from https://ffmpeg.org/
@@ -52,10 +52,15 @@ class ant_knowledge(Knowledge):
 
 
 class go_to_biggest_nest(Soul):
-    def __init__(self,body,space,T=TS,r=1,rng=np.pi):
+    def __init__(self,body,space,T=TS,r=1,rng=np.pi, p_tran_go_nest = 0.5,
+                    p_com_go_nest = 5,
+                    p_com_stay_nest = 5):
         self.space=space
         self.r=r
         self.rng=rng
+        self.p_tran_go_nest = p_tran_go_nest
+        self.p_com_go_nest = p_com_go_nest
+        self.p_com_stay_nest = p_com_stay_nest
         GoTo(body,0,Kp=0.2,tol=0.01,nw='zigzag',p=0.1)
         self.GoTo=body.souls[-1]
         ant_knowledge(body,'random_walk')
@@ -165,7 +170,7 @@ class go_to_biggest_nest(Soul):
         self.set_velocity_random_walk()
         self.compare_neighbors()
 
-        if randint(1,5000) < 10:
+        if random() < self.p_tran_go_nest/100.0:
             self.change_state("go_to_nest")
 
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -183,7 +188,7 @@ class go_to_biggest_nest(Soul):
                     t_data = self.space.nearestpoint(self.index, nest)
                     self.change_state("stay_in_nest",t_data=t_data)
                     break
-        if randint(1,100) < 5:
+        if random() < self.p_com_go_nest:
             self.compare_neighbors()
 
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -194,7 +199,7 @@ class go_to_biggest_nest(Soul):
         if type(t_data) != type(None):
             self.GoTo.cmd_set(t_data, nw="stop", Kp=5, tol = 0.5)
 
-        if randint(1,100) < 5:
+        if random() < self.p_com_stay_nest:
             self.compare_neighbors()
 
     def update(self):
@@ -203,12 +208,12 @@ class go_to_biggest_nest(Soul):
 
 ## MAIN
 if __name__ == '__main__':
-    N=25
+    N=100
     param_R = 2
     param_rng = np.pi/2
 
 
-    
+
     name='Demo'+strftime("%Y%m%d%H%M", localtime())
     s=Space(name,T=RT,limits='')
     p=KPIdata(name,2,TS)
@@ -248,11 +253,11 @@ if __name__ == '__main__':
             for b in s.bodies:
 
                 if isinstance(b,Mobot):
-                    if b.knows.tell_state()=='stay_in_nest' and b.knows.check_quadrant(b)==2:
+                    if b.knows.tell_state() in ['stay_in_nest', 'go_to_nest'] and b.knows.quadrant==2:
 
                             KPI[0]=KPI[0]+1
 
-                    if b.knows.tell_state()=='stay_in_nest' and b.knows.check_quadrant(b)==4:
+                    if b.knows.tell_state() in ['stay_in_nest', 'go_to_nest'] and b.knows.quadrant==4:
 
                             KPI[1] = KPI[1]+1
 

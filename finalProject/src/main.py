@@ -17,7 +17,7 @@ if __name__ == "__main__":
     for i in range(len(env.robots)):
         if i%3==0:
             env.robots[i].consensus.set_active(n)
-            env.robots[i].consensus.set_displacement()
+            env.robots[i].consensus.set_displacement(1)
             n=n+1
 
     #for i in env.robots:
@@ -27,7 +27,5 @@ if __name__ == "__main__":
         env.update_env()
         if i%10==0:
             env.draw_env()
-        #print('neighbours:', env.neighbours_information)
-        print(env.robots[0].battery.battery)
         i=i+1
         cv2.waitKey(100)
