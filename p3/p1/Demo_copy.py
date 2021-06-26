@@ -165,7 +165,7 @@ class go_to_biggest_nest(Soul):
         self.set_velocity_random_walk()
         self.compare_neighbors()
 
-        if randint(1,500) < 10:
+        if randint(1,5000) < 10:
             self.change_state("go_to_nest")
 
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -203,6 +203,12 @@ class go_to_biggest_nest(Soul):
 
 ## MAIN
 if __name__ == '__main__':
+    N=25
+    param_R = 2
+    param_rng = np.pi/2
+
+
+    
     name='Demo'+strftime("%Y%m%d%H%M", localtime())
     s=Space(name,T=RT,limits='')
     p=KPIdata(name,2,TS)
@@ -214,12 +220,12 @@ if __name__ == '__main__':
     s.bodies.append(smallnest)
 
     # SPAWN MOBOTS
-    N=200
+    
     s.spawn_bodies(nm=N)
     for b in s.bodies:
         if isinstance(b,Mobot):
             b.cmd_vel(v=b.v_max/2)
-            go_to_biggest_nest(b,s,TS/10,r=2,rng=np.pi/2)
+            go_to_biggest_nest(b,s,TS/10,r=param_R,rng=param_rng)
 
     # RUN SIMULATION
     KPI=[0,1] # [ fraction of live mobots who know ThereAreNests , fraction of initial robots still alive ]
