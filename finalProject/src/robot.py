@@ -17,14 +17,22 @@ class battery:
         self.K = K  # percentage/((m/s))
         self.C = C  # percentage/((m/s))
 
-        self.charging_rate=0.15 #percentage/second
+        self.charging_rate=30 #percentage/second
         self.remaining=(self.battery>0)
 
-    def update(self):
-        if self.charging:
-            self.battery=self.battery+self.charging_rate*self.dT
+    def update(self,state,robot):
+        self.robot=robot
+        if state=='Charging':
+            self.charging==True
+            self.battery = self.battery + self.charging_rate
         else:
-            self.battery=self.battery-self.K*np.linalg.norm(self.robot.velocity[-1])*self.dT-self.C*np.linalg.norm(self.robot.velocity[-1]-self.robot.velocity[-2])*self.dT
+            self.charging==False
+            self.battery = self.battery - self.K * np.linalg.norm(
+                self.robot.velocity[-1]) * self.dT - self.C * np.linalg.norm(
+                self.robot.velocity[-1] - self.robot.velocity[-2]) * self.dT
+
+
+
         if self.battery<0:
             self.battery=0
             self.remaining=False
@@ -50,6 +58,9 @@ class GoTo:
     def check_arrive(self,position):
         if np.linalg.norm(position-self.goal)<self.tolerance:
             self.stop()
+            return True
+        else:
+            return False
 
     def compute_vel(self,position,velocity):
         v = 0.1 * (self.goal - position)
@@ -75,6 +86,8 @@ class Consensus:
         self.dT = dT
         self.num_order=0
         self.displacement=np.array([0,0])
+
+
     def set_active(self,num_order):
         self.num_order=num_order
         self.active=True
@@ -86,10 +99,10 @@ class Consensus:
     def compute_goal(self,environment,position):
 
         nei=environment.neighbours_information[self.index]
-        sum=position
-        num=1
+        sum=0
+        num=0
         for i in range(len(nei)):
-            if environment.robots[nei[i]].state=='Active' and environment.robots[nei[i]].consensus.active:
+            if environment.robots[nei[i]].state=='Active':
                 sum=sum+environment.robots[nei[i]].position[-1]
                 num=num+1
         self.goal=sum/(num)+self.displacement
@@ -114,7 +127,7 @@ class Consensus:
 
 
 class robot:
-    def __init__(self,index, base_pose,init_battery=100, init_position=np.array([0,0]), radius=5, dT=1,connection_radius=800):
+    def __init__(self,index, base_pose,init_battery=100, init_position=np.array([0,0]), radius=11, dT=1,connection_radius=800):
         self.base_pose=base_pose
         self.index=index
         self.connection_radius=connection_radius
@@ -130,7 +143,7 @@ class robot:
 
 
 
-        self.state='Active' #possible states: Active, Returning, Charging
+        self.state='Waiting' #possible states: Waiting,Active, Returning, Charging
 
         self.neighbours=[]
 
@@ -149,37 +162,40 @@ class robot:
 
         self.position.append(np.array(self.position[-1]+self.velocity[-1]*self.dT))
 
-        self.battery.update()
+        self.battery.update(self.state,self)
 
-        if self.battery.battery<10 and self.state=='Active':
+        if self.battery.battery<95 and self.state=='Active':
             self.state='Returning'
             self.GoTo.set_goal(self.base_pose)
 
         if self.battery.battery==100 and self.state=='Charging':
-             self.state=='Active'
+             self.state='Waiting'
              self.battery.charging=False
 
     def compute_vel(self,enviroment):
+        #print('Soy el robot', self.index, 'y mi estado es:  ', self.state)
         "Aquí debería ir el cálculo de la velocidad basado en la posición de los neighbours"
-        if self.battery.remaining==False:
+        if self.battery.remaining==False or self.state=='Waiting' or self.state=='Charging':
             return np.array([0,0])
 
-        if self.GoTo.active:
+        if self.state=='Returning':
+          self.consensus.active==False
+          self.GoTo.active==True
+          self.GoTo.set_goal(self.base_pose)
           v=self.GoTo.compute_vel(self.position[-1],self.velocity[-1])
-          self.GoTo.check_arrive(self.position[-1])
-          if self.GoTo.active==False and self.state=='Returning':
-             self.state='Charging'
-             self.battery.charging=True
+          arrive=self.GoTo.check_arrive(self.position[-1])
+          if arrive:
+              self.state='Charging'
 
-        elif self.consensus.active:
+          return v
+
+        if self.state=='Active':
+            self.consensus.active==True
             v=self.consensus.compute_vel(self.position[-1],self.velocity[-1],enviroment)
 
-        else:
-            v=np.array([0,0])
+            return v
 
 
-
-        return v
     def update_neighbours(self,environment):
         self.neighbours=environment.neighbours_information[self.index]
 
