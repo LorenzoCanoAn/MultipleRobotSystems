@@ -1,21 +1,22 @@
+import cv2
 import numpy as np
 import matplotlib.pyplot as plt
 from environment import *
 import operator
+
 class formation_planner:
     def __init__(self,env):
-        self.center=np.array([0,0])
-        self.enviroment=env
-        self.number_actives=0
+        self.center=np.array([0,0]) # Center of the formation
+        self.enviroment=env         
+        self.number_actives=0       # Number of active robots
         self.active_index=[]
-        self.direction=np.array([0,0])
+        self.direction=np.array([0,0]) # Orientation of the formation
         self.gap=0
 
         for i in range(len(env.robots)):
             if self.enviroment.robots[i].state=='Active':
                 self.number_actives+=1
-                self.active_index.append(i)
-
+                self.active_index.append(env.robots[i].index)
             else:
                 self.enviroment.robots[i].consensus.set_off()
 
@@ -29,11 +30,6 @@ class formation_planner:
                 self.active_index.append(i)
                 self.enviroment.robots[i].consensus.num_order=order
                 order+=1
-
-
-
-
-
 
     def update(self,env):
         self.enviroment.update_env()
@@ -147,6 +143,8 @@ if __name__ == "__main__":
     env_params = {
         "base_pose": [10, 10]
     }
+
+
     env = environment(env_params)
     pathplanner=formation_planner(env)
 
@@ -168,8 +166,9 @@ if __name__ == "__main__":
     vary=False
     i=0
     old_active = pathplanner.active_index
+    hola = 0
     while goal[0]<600:
-
+        cv2.waitKey(10)
 
         if not same_robots and vary==False:
             previous_goal=goal
@@ -196,20 +195,15 @@ if __name__ == "__main__":
         pathplanner.move_formation_goal(goal)
         pathplanner.update(pathplanner.enviroment)
         pathplanner.set_robots_active(5)
-        if i%300==0:
+        if i%10==0:
             pathplanner.enviroment.draw_env()
 
-        #print('neighbours:', env.neighbours_information)
-
         i=i+1
-
-
 
         cv2.waitKey(1)
         potential_goal=pathplanner.center
 
         pathplanner.update_actives()
-        #print(pathplanner.active_index)
         same_robots = listas_iguales(old_active, pathplanner.active_index)
         old_active = pathplanner.active_index
 

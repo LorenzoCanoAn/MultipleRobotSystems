@@ -6,30 +6,27 @@ import time
 
 
 env_params = {
-    "base_pose":[10,10]
+    "env_height"  : 400,
+    "env_width"   : 600,
+    "nBots"     : 20,
+    "base_pose" : [10,10],
+    "window_name": "display"
 }
 
 
 if __name__ == "__main__":
-    "ahora mismo, iniciamos el environment con 20 robots cargados al 100% de bateria repartidos uniformemente por el environment"
     env = environment(env_params)
     n=0
     for i in range(len(env.robots)):
         if i%3==0:
             env.robots[i].consensus.set_active(n)
-<<<<<<< HEAD
-            env.robots[i].consensus.set_displacement(1)
-=======
-            #env.robots[i].consensus.set_displacement(5)
->>>>>>> efb794e074a29574e3b419e8ba6596b3436ac66a
+            env.robots[i].consensus.set_displacement(5)
             n=n+1
 
-    # for i in env.robots:
-    #     env.robots[i].GoTo.set_goal(np.array([10,10]))
     i=0
     while True:
         env.update_env()
         if i%10==0:
             env.draw_env()
-        i=i+1
+        i+=1
         cv2.waitKey(100)

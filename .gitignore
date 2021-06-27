@@ -150,3 +150,5 @@ dmypy.json
 **/HRVO/**/*.so*
 **/HRVO/**/examples/**
 !**/HRVO/**/examples/*.cpp
+.idea/workspace.xml
+finalProject/src/.idea/other.xml

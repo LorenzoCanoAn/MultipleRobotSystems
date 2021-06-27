@@ -28,16 +28,6 @@ class environment:
         self.init_plot()
         self.neighbours_information = {}
 
-
-
-
-
-
-
-
-
-
-
     def init_params(self, i_params):
         if type(i_params) == type(None):
             self.init_default_params()
@@ -139,12 +129,6 @@ class environment:
     def draw_env(self):
         self.combine_layers()
         cv2.imshow(self.params["window_name"], self.dispImage)
-<<<<<<< HEAD
-
-    def init_robots(self):
-        for i in range(self.params['nBots']):
-            self.robots[i]=(robot(self,i,self.base.position,dT=self.dT,init_position=np.array([600*np.random.uniform(0,1),400*np.random.uniform(0,1)])))
-=======
         self.percentage_covered.append(
             np.count_nonzero(self.covered_layer) / (len(self.covered_layer) * len(self.covered_layer[0])))
         self.T_list.append(self.T)
@@ -152,19 +136,14 @@ class environment:
 
     def init_robots(self):
         for i in range(self.params['nBots']):
-            self.robots[i]=(robot(i,self.base.position,dT=self.dT,init_position=self.base.position))
->>>>>>> efb794e074a29574e3b419e8ba6596b3436ac66a
+            self.robots[i]=(robot(self,i,self.base.position,dT=self.dT,init_position=self.base.position))
 
 
     def update_robots(self):
         self.compute_neighbours()
         for i in self.robots:
-            self.robots[i].update(self)
+            self.robots[i].update()
             self.robots[i].update_neighbours()
-
-
-
-
 
 def overlay(image1, image2):
     mask = np.sum(image2,axis=2) == 0 # value of 1 where image 2 is 0
