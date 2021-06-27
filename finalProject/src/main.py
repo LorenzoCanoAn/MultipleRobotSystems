@@ -17,11 +17,15 @@ if __name__ == "__main__":
     for i in range(len(env.robots)):
         if i%3==0:
             env.robots[i].consensus.set_active(n)
+<<<<<<< HEAD
             env.robots[i].consensus.set_displacement(1)
+=======
+            #env.robots[i].consensus.set_displacement(5)
+>>>>>>> efb794e074a29574e3b419e8ba6596b3436ac66a
             n=n+1
 
-    #for i in env.robots:
-        #env.robots[i].GoTo.set_goal(np.array([10,10]))
+    # for i in env.robots:
+    #     env.robots[i].GoTo.set_goal(np.array([10,10]))
     i=0
     while True:
         env.update_env()

@@ -110,16 +110,14 @@ if __name__ == '__main__':
     N=50
     s.spawn_bodies(nm=N,room=[(-4,-4),(4,-4),(4,4),(-4,4)])
 
-    good_distance=0.7
-
 
     for b in s.bodies:
         if isinstance(b,Mobot):
-            Boid(b,s,good_distance,0.1*TS) # ADD YOUR ARGUMENTS
+            Boid(b,s,0.7,0.1*TS) # ADD YOUR ARGUMENTS
     p=KPIdata(name,5,TS)
 
 
-    KPI=[0,1,np.sqrt(N),1,0]
+    KPI=[0,0,np.sqrt(N),1,0]
 
     end=False
 
@@ -133,57 +131,16 @@ if __name__ == '__main__':
         if visual and time()>s.t0+(s.updates+1)*s.T:
             s.redraw()
         if time()>p.t0+(p.updates+1)*p.T:
-            graph = s.graph(Mobot)
             alive=0
-            centroid_x = 0
-            centroid_y = 0
-            heading_avg = [0, 0]
-            avg_error_to_good = 0
-            n_total_neighbours = 0
-            cum=0
             for b in s.bodies:
                 if isinstance(b,Mobot):
                     alive=alive+1
-                    # Compute centroid
-                    centroid_x += b.pos.x
-                    centroid_y += b.pos.y
-
-                    # Compute average heading for order metric
-                    heading_avg[0] += np.cos(b.th)
-                    heading_avg[1] += np.sin(b.th)
-
-                    # Compute average error to good distance
-                    neighbours = graph[s.bodindex(b.name)]
-                    n_total_neighbours += len(neighbours)
-                    for neigh_index in neighbours:
-                        neigh = s.bodies[neigh_index]
-                        distance_to_neighbour = np.sqrt((neigh.pos.x - b.pos.x) ** 2 + (neigh.pos.y - b.pos.y) ** 2)
-                        avg_error_to_good += ((distance_to_neighbour - good_distance) / good_distance) ** 2
-
-                    if len(b.souls[-1].boid_integrants)/N>cum:
-                         cum=len(b.souls[-1].boid_integrants)/N
-            KPI[0]=alive/N   #Esto es el numero de robots que estan vivod
-            centroid_x /= alive
-            centroid_y /= alive
-
-
-            max_dist = 0
-            for b in s.bodies:
-                distance_to_centroid = np.sqrt((centroid_y - b.pos.y) ** 2 + (centroid_x - b.pos.x) ** 2)
-                if distance_to_centroid > max_dist:
-                    max_dist = distance_to_centroid
-
-            KPI[1]=cum  #Esto es el porcentaje de robots que estan en el boid mas grande
-
-            KPI[2] = max_dist / (np.sqrt(N) * good_distance)  #Esto es el ratio entre maxima distancia al centroide de todos los robots, y el valor que deberia tener
-                                                            #si todos los robots estuvieran en un boid. Esto siempre es mayor que uno, idealmente seróia 1.
-
-            KPI[3] = avg_error_to_good / n_total_neighbours  #Esto tiene que ser cercano a 0 para estar bien, porque 0 error es que todos los robots estan juntos
-
-            KPI[4] = np.linalg.norm(heading_avg) / N  #Esto tiene que ser cercano a 1 para estar bien. es 1 cuando todos los robots miran en la misma direccion
+                    if len(b.souls[-1].boid_integrants)/N>KPI[1]:
+                         KPI[1]=len(b.souls[-1].boid_integrants)/N
+            KPI[0]=alive/N
 
             # YOUR KPI CALCULATIONS
-            print(KPI)
+            print('El maximo es: ', KPI[1])
             p.update(KPI)
 
 
@@ -194,7 +151,7 @@ if __name__ == '__main__':
         p.close()
         a=np.genfromtxt(name+'.dat')
         x=a.T[0]
-        for i in range(a.shape[1]-1):
+        for i in range(len(a[0])-1):
             plt.figure(i)
             plt.plot(x,a.T[i+1])
             plt.show()

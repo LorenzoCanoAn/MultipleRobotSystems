@@ -13,6 +13,9 @@ class base:
 class environment:
 
     def __init__(self, i_params=None):
+        self.T=0
+        self.percentage_covered = []
+        self.T_list=[]
         self.dT=0.1
         self.robots={}
 
@@ -24,6 +27,12 @@ class environment:
 
         self.init_plot()
         self.neighbours_information = {}
+
+
+
+
+
+
 
 
 
@@ -51,7 +60,7 @@ class environment:
 
                 continue
             for j in self.robots:
-                if self.robots[j].state!='Active' or i==j:
+                if self.robots[j].state!='Active':
 
                     continue
 
@@ -113,11 +122,16 @@ class environment:
                 col=(0,0,255)
             elif  self.robots[i].state=='Charging':
                 col=(128,0,128)
+            elif self.robots[i].state=='Waiting':
+                col=  (255,128,128)
             self.robot_layer=cv2.putText(self.robot_layer, str(round(self.robots[i].battery.battery,2)), (pose[0]+4, pose[1]+4),cv2.FONT_HERSHEY_SIMPLEX,0.4,color=col)
 
             self.covered_layer = cv2.circle(self.covered_layer, (pose[0], pose[1]), self.robots[0].radius, (0, 200, 200), -1)
 
+
+
     def update_env(self):
+        self.T+=self.dT
         self.draw_base()
         self.draw_robots()
         self.update_robots()
@@ -125,10 +139,21 @@ class environment:
     def draw_env(self):
         self.combine_layers()
         cv2.imshow(self.params["window_name"], self.dispImage)
+<<<<<<< HEAD
 
     def init_robots(self):
         for i in range(self.params['nBots']):
             self.robots[i]=(robot(self,i,self.base.position,dT=self.dT,init_position=np.array([600*np.random.uniform(0,1),400*np.random.uniform(0,1)])))
+=======
+        self.percentage_covered.append(
+            np.count_nonzero(self.covered_layer) / (len(self.covered_layer) * len(self.covered_layer[0])))
+        self.T_list.append(self.T)
+
+
+    def init_robots(self):
+        for i in range(self.params['nBots']):
+            self.robots[i]=(robot(i,self.base.position,dT=self.dT,init_position=self.base.position))
+>>>>>>> efb794e074a29574e3b419e8ba6596b3436ac66a
 
 
     def update_robots(self):
