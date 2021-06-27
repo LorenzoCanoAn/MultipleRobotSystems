@@ -123,19 +123,19 @@ class environment:
         self.update_robots()
 
     def draw_env(self):
-
         self.combine_layers()
         cv2.imshow(self.params["window_name"], self.dispImage)
+
     def init_robots(self):
         for i in range(self.params['nBots']):
-            self.robots[i]=(robot(i,self.base.position,dT=self.dT,init_position=np.array([600*np.random.uniform(0,1),400*np.random.uniform(0,1)])))
+            self.robots[i]=(robot(self,i,self.base.position,dT=self.dT,init_position=np.array([600*np.random.uniform(0,1),400*np.random.uniform(0,1)])))
 
 
     def update_robots(self):
         self.compute_neighbours()
         for i in self.robots:
             self.robots[i].update(self)
-            self.robots[i].update_neighbours(self)
+            self.robots[i].update_neighbours()
 
 
 
