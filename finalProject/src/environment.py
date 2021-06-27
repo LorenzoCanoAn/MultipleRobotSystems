@@ -27,6 +27,8 @@ class environment:
 
         self.init_plot()
         self.neighbours_information = {}
+        self.leaving_info = [1, [0,0]]
+
 
     def init_params(self, i_params):
         if type(i_params) == type(None):
@@ -46,12 +48,10 @@ class environment:
         for i in self.robots:
 
             self.neighbours_information[i]=[]
-            if self.robots[i].state!='Active':
-
+            if not self.robots[i].state in ['active', "going_formation", "waiting_active"]:
                 continue
             for j in self.robots:
-                if self.robots[j].state!='Active':
-
+                if not self.robots[j].state in ['active', "going_formation", "waiting_active"]:
                     continue
 
                 if np.linalg.norm(self.robots[i].position[-1]-self.robots[j].position[-1])<self.robots[i].connection_radius:
@@ -63,6 +63,7 @@ class environment:
             "env_height"  : 400,
             "env_width"   : 600,
             "nBots"     : 20,
+            "r_rad"     : 11,
             "base_pose" : [10,10],
             "window_name": "display"
         }
@@ -103,16 +104,16 @@ class environment:
         self.robot_layer = np.zeros(self.w_size,dtype="uint8")
         for i in range(len(self.robots)):
 
-            pose=self.coord_to_pixel(self.robots[i].position[-1])
+            pose=self.coord_to_pixel(self.robots[i].position)
             self.robot_layer = cv2.circle(self.robot_layer, (pose[0],pose[1]), 1, (0,200,0), -1)
             self.robot_layer = cv2.circle(self.robot_layer, (pose[0], pose[1]), self.robots[i].radius, (255, 255, 255))
-            if self.robots[i].state=='Active':
+            if self.robots[i].state=='active':
                 col=(0,255*self.robots[i].battery.battery/100,255-255*self.robots[i].battery.battery/100)
-            elif self.robots[i].state=='Returning':
+            elif self.robots[i].state in ['going_base',"going_formation"]:
                 col=(0,0,255)
-            elif  self.robots[i].state=='Charging':
+            elif  self.robots[i].state=='charging':
                 col=(128,0,128)
-            elif self.robots[i].state=='Waiting':
+            elif self.robots[i].state in ['waiting_base', "waiting_active"]:
                 col=  (255,128,128)
             self.robot_layer=cv2.putText(self.robot_layer, str(round(self.robots[i].battery.battery,2)), (pose[0]+4, pose[1]+4),cv2.FONT_HERSHEY_SIMPLEX,0.4,color=col)
 
@@ -136,14 +137,13 @@ class environment:
 
     def init_robots(self):
         for i in range(self.params['nBots']):
-            self.robots[i]=(robot(self,i,self.base.position,dT=self.dT,init_position=self.base.position))
+            self.robots[i]=(robot(self,i,self.base.position,radius=self.params["r_rad"],dT=self.dT,init_position=self.base.position))
 
 
     def update_robots(self):
         self.compute_neighbours()
         for i in self.robots:
             self.robots[i].update()
-            self.robots[i].update_neighbours()
 
 def overlay(image1, image2):
     mask = np.sum(image2,axis=2) == 0 # value of 1 where image 2 is 0
