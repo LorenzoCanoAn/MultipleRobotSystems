@@ -13,7 +13,7 @@ class battery:
         self.charging = False
 
         # Battery model:  battery[i+1]=battery[i]-K * v[i+1]- C * abs(v[i+1]-v[i]), con i+1 un segundo despues de i
-        self.battery = init_battery + -randint(50, 70)
+        self.battery = init_battery #+ -randint(50, 70)
         self.K = K  # percentage/((m/s))
         self.C = C  # percentage/((m/s))
         self.charging_threshold = 20
@@ -28,9 +28,10 @@ class battery:
             self.battery = self.battery + self.charging_rate * self.robot.dT
         else:
             self.charging == False
-            self.battery = self.battery - self.K * np.linalg.norm(
-                self.robot.velocity) * self.dT - self.C * np.linalg.norm(
-                self.robot.velocity - self.robot.velocity_hist[-1]) * self.dT
+            if not self.robot.state == "waiting_active":
+                self.battery = self.battery - self.K * np.linalg.norm(
+                    self.robot.velocity) * self.dT - self.C * np.linalg.norm(
+                    self.robot.velocity - self.robot.velocity_hist[-1]) * self.dT
 
         if self.battery < 0:
             self.battery = 0

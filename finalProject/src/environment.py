@@ -115,7 +115,7 @@ class environment:
                 col=(128,0,128)
             elif self.robots[i].state in ['waiting_base', "waiting_active"]:
                 col=  (255,128,128)
-            self.robot_layer=cv2.putText(self.robot_layer, str(round(self.robots[i].battery.battery,2)), (pose[0]+4, pose[1]+4),cv2.FONT_HERSHEY_SIMPLEX,0.4,color=col)
+            self.robot_layer=cv2.putText(self.robot_layer, str(int(self.robots[i].battery.battery)), (pose[0]-4, pose[1]+20),cv2.FONT_HERSHEY_SIMPLEX,0.4,color=col)
 
             self.covered_layer = cv2.circle(self.covered_layer, (pose[0], pose[1]), self.robots[0].radius, (0, 200, 200), -1)
 
@@ -131,7 +131,7 @@ class environment:
         self.combine_layers()
         cv2.imshow(self.params["window_name"], self.dispImage)
         self.percentage_covered.append(
-            np.count_nonzero(self.covered_layer) / (len(self.covered_layer) * len(self.covered_layer[0])))
+            np.count_nonzero(np.sum(self.covered_layer,2)) / (self.covered_layer.shape[0]*self.covered_layer.shape[1]))
         self.T_list.append(self.T)
 
 

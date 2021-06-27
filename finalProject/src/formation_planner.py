@@ -7,16 +7,16 @@ import operator
 
 
 
-n_bots_formation = 10
+n_bots_formation = 20
 
 class formation_planner:
-    def __init__(self,env, n_bots_formation = n_bots_formation):
+    def __init__(self,env, n_bots_formation = n_bots_formation, gap = None):
         self.center=np.array([0,0]) # Center of the formation
         self.enviroment=env         
         self.number_actives=0       # Number of active robots
         self.active_index=[]
         self.direction=np.array([1,0]) # Orientation of the formation
-        self.gap=9
+        self.gap=gap
         self.n_bots_formation = n_bots_formation
         for i in range(len(env.robots)):
             if self.enviroment.robots[i].state in ['active', "going_formation", "waiting_active"]:
@@ -80,8 +80,6 @@ class formation_planner:
         gap = self.gap
 
         for i in range(len(self.active_index)):
-            print(i,end="------")
-            print(gap*direction*(self.enviroment.robots[self.active_index[i]].consensus.num_order+1-(len(self.active_index)+1)/2))
             self.enviroment.robots[self.active_index[i]].consensus.set_displacement(gap*direction*(self.enviroment.robots[self.active_index[i]].consensus.num_order+1-(len(self.active_index)+1)/2))
 
     def move_formation(self,direction,intensity):
@@ -112,7 +110,6 @@ class formation_planner:
             while number>n_actives:
                 self.enviroment.robots[waiting_index[i]].change_state('going_formation',transition=self.enviroment.leaving_info[1])
                 self.enviroment.robots[waiting_index[i]].consensus.num_order = self.enviroment.leaving_info[0]
-                print("I go to formation, i inherit: {}".format(self.enviroment.leaving_info))
                 
                 active_index.append(waiting_index[i])
                 n_actives+=1
@@ -166,19 +163,22 @@ def listas_iguales(lista, lista2):
 
 if __name__ == "__main__":
     env_params = {
-        "base_pose": [10, 10]
-    }
-
+        "base_pose": [200, 300],
+        "nBots"     : 50,
+        "r_rad"     : 20
+        }
 
     env = environment(env_params)
-    pathplanner=formation_planner(env)
+    gap = env.robots[0].radius*0.8
 
+    pathplanner=formation_planner(env, gap = gap)
+
+    
     pathplanner.set_robots_active(n_bots_formation)
     pathplanner.update_actives()
 
 
 
-    gap = env.robots[0].radius - 2
     goal=np.array([(gap * n_bots_formation)/2,0])
     print('New goal:', goal)
 
@@ -191,8 +191,9 @@ if __name__ == "__main__":
     i=0
     old_active = pathplanner.active_index
     hola = 0
+    fourcc = cv2.VideoWriter_fourcc(*'XVID')
 
-    out = cv2.VideoWriter('output.avi', -1, 20.0, (400, 600))
+    out = cv2.VideoWriter('output.avi', fourcc, 20.0, (600, 400 ))
 
     while goal[0]<600:
         # ROBOT CHANGE HANDLING
@@ -224,6 +225,7 @@ if __name__ == "__main__":
     out.release()
     plt.plot(pathplanner.enviroment.T_list , pathplanner.enviroment.percentage_covered)
     plt.show()
+    cv2.destroyAllWindows()
 
 
 
